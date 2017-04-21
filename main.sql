@@ -51,7 +51,7 @@ create table mark(
     id int not null auto_increment primary key, -- id
     name varchar(16) not null, -- 标签名
     user int not null, -- user表用户id 、用于表明这个标签是那个用户设立的.
-    adddate datetime default now(), -- 设置标签的时间
+    pushdate datetime default now(), -- 设置标签的时间
 
     constraint uix_mark__name unique index(user,name), -- 唯一约束、同一用户名下标签名不能重复
     constraint frk_mark__user foreign key(user) references user(id) on delete no action on update cascade -- 关联到用户表
@@ -63,8 +63,8 @@ create table blog(
     name varchar(32) not null, -- 博客名
     user int not null, -- 作者id
     pushdate datetime default now(), -- 发表时间
-    accesstimes int, -- 访问次数
-    praises int , -- 点赞数  
+    accesstimes int default 0, -- 访问次数
+    praisetimes int default 0, -- 点赞数  
     constraint frk_blog__user foreign key(user) references user(id) on delete no action on update cascade
 );
 
