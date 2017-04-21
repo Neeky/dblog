@@ -43,7 +43,7 @@ create table user(
 
     constraint uix_user__name unique index(name), -- 用户名要唯一
     constraint uix_user__email unique index(email), -- 邮件名不同用户间不能重复
-    constraint frk_user__gender foreign key(gender) references gender(id) on delete no action on update cascade -- 外键引用
+    constraint frk_user__gender foreign key(gender) references gender(id) on delete cascade on update cascade -- 外键引用
 );
 
 -- mark(博客标签)
@@ -51,10 +51,10 @@ create table mark(
     id int not null auto_increment primary key, -- id
     name varchar(16) not null, -- 标签名
     user int not null, -- user表用户id 、用于表明这个标签是那个用户设立的.
-    pushdate datetime default now(), -- 设置标签的时间
+    pushdate datetime default now(), -- 增加标签的时间
 
     constraint uix_mark__name unique index(user,name), -- 唯一约束、同一用户名下标签名不能重复
-    constraint frk_mark__user foreign key(user) references user(id) on delete no action on update cascade -- 关联到用户表
+    constraint frk_mark__user foreign key(user) references user(id) on delete cascade on update cascade -- 关联到用户表
 );
 
 -- blog(博客)
@@ -65,7 +65,10 @@ create table blog(
     pushdate datetime default now(), -- 发表时间
     accesstimes int default 0, -- 访问次数
     praisetimes int default 0, -- 点赞数  
-    constraint frk_blog__user foreign key(user) references user(id) on delete no action on update cascade
+    content text, -- blog 内容     ???数据量大的时候content 字段可能会引起性能问题 ???
+
+    constraint frk_blog__user foreign key(user) references user(id) on delete cascade on update cascade,
+    index ix_blog__user_pushdate (user,pushdate) -- mysql-5.7索引不支持desc
 );
 
 -- blog_mark_relaction_ship(博客于标签的对应关系)
@@ -73,14 +76,23 @@ create table blog_mark_relaction_ship(
     id int not null primary key, -- id
     mark int not null, -- makr id
     blog int not null, -- blog id
+    user int not null, -- user id
 
-    constraint frk_blog_mark_relaction_ship__mark foreign key(mark) references mark(id) on delete no action on update cascade, -- 外键引用
-    constraint frk_blog_mark_relaction_ship__mark foreign key(blog) references blog(id) on delete no action on update cascade
+    constraint frk_blog_mark_relaction_ship__mark foreign key(mark) references mark(id) on delete cascade on update cascade, -- 外键引用
+    constraint frk_blog_mark_relaction_ship__blog foreign key(blog) references blog(id) on delete cascade on update cascade, -- 外键引用
+    constraint frk_blog_mark_relaction_ship__user foreign key(user) references user(id) on delete cascade on update cascade, -- 外键引用
+    index ix_blog_mark_relaction_ship__user_mark (user,mark), -- 索引
+    index ix_blog_mark_relaction_ship__user_blog (user,blog)  -- 索引
 );
 
 -- commentary(评论)
 create table commentary(
     id int not null auto_increment primary key,
 )
+
+
+drop database dblog;
+create database dblog;
+use dblog;
  
 
