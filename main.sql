@@ -88,14 +88,29 @@ create table blog_mark_relaction_ship(
     index ix_blog_mark_relaction_ship__user_blog (user,blog)  -- 索引
 );
 
--- commentary(评论)
+-- commentary(评论) 
+    -- 为了迎合对评论区的高要求、这里用闭包的方式来实现数据库后端的存储
+    -- 也就是说commentary 表只存评论数据、
+    -- commentary_relation_ship 表用来保存评论的树型关系
 create table commentary(
     id int not null auto_increment primary key,
-)
+    blog int not null,-- blog id
+    content varchar(256), -- 评论的内容
+    pushdate datetime default now(), -- 评论时间
+    user int not null, -- 发起这条评论的用户
+    praisetimes int default 0, -- 点赞数 
 
+    constraint frk_commentary__blog foreign key(blog) references blog(id) on delete no action on update cascade,
+    constraint frk_commentary__user foreign key(user) references user(id) on delete no action on update cascade
+);
 
-drop database dblog;
-create database dblog;
-use dblog;
- 
+create table commentary_relation_ship(
+    ancestor int not null, -- 祖先
+    descendant int not null, -- 自己(后代)
+
+    constraint pmk_commentary_relation_ship__ancestor__descendant primary key(ancestor,descendant),
+    constraint frk_commentary_relation_ship__ancestor foreign key(ancestor) on delete no action on update cascade,
+    constraint frk_commentary_relation_ship__descendant foreign key(descendant) on delete no action on update cascade
+);
+
 
