@@ -31,6 +31,8 @@ create table user(
     id int auto_increment primary key, -- id
     name varchar(16), -- 用户名
     passstr varchar(32), -- 密码md5值
+    phonenumber bigint unsigned , -- 手机号
+    birthday date default '1900-01-01', -- 生日
     email varchar(64), -- 邮件地址
     signstr varchar(32), -- 个性签名
     authstr varchar(64), -- 验证地址
@@ -39,8 +41,8 @@ create table user(
     registerdate datetime default now(), -- 注册日期/时间
     lastlogindate datetime default now(), -- 最近一次登录的日期/日间
     useragent varchar(32), -- 用户的的客户端类型 ie | chrome | iphone | 安卓 ... 
-    longitude double, -- 经度
-    latitude double , -- 纬度
+    longitude double default -1, -- 经度
+    latitude double default -1, -- 纬度
 
     constraint uix_user__name unique index(name), -- 用户名要唯一
     constraint uix_user__email unique index(email), -- 邮件名不同用户间不能重复
