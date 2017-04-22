@@ -49,7 +49,7 @@ create table user(
     constraint frk_user__gender foreign key(gender) references gender(id) on delete no action on update cascade -- 外键引用
 );
 
--- mark(博客标签)
+-- mark(博客标签) 
 create table mark(
     id int not null auto_increment primary key, -- id
     name varchar(16) not null, -- 标签名
@@ -104,6 +104,7 @@ create table commentary(
     constraint frk_commentary__user foreign key(user) references user(id) on delete no action on update cascade
 );
 
+-- commentary_relation_ship(评论之间的树形关系)
 create table commentary_relation_ship(
     ancestor int not null, -- 祖先
     descendant int not null, -- 自己(后代)
@@ -112,5 +113,22 @@ create table commentary_relation_ship(
     constraint frk_commentary_relation_ship__ancestor foreign key(ancestor) on delete no action on update cascade,
     constraint frk_commentary_relation_ship__descendant foreign key(descendant) on delete no action on update cascade
 );
+
+
+-- 以下是评论区的第二中设计方案 路径枚举
+-- commentary(评论)
+create table commentary(
+    id int not null auto_increment primary key,
+    blog int not null,-- blog id
+    content varchar(256), -- 评论的内容
+    pushdate datetime default now(), -- 评论时间
+    user int not null, -- 发起这条评论的用户
+    praisetimes int default 0, -- 点赞数 
+    parentid varchar(512) default null, -- 评论的树形 形态.
+
+    constraint frk_commentary__blog foreign key(blog) references blog(id) on delete no action on update cascade,
+    constraint frk_commentary__user foreign key(user) references user(id) on delete no action on update cascade
+);
+
 
 
