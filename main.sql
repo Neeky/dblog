@@ -124,7 +124,7 @@ create table commentary(
     pushdate datetime default now(), -- 评论时间
     user int not null, -- 发起这条评论的用户
     praisetimes int default 0, -- 点赞数 
-    parentid varchar(512) default null, -- 评论的树形 形态.
+    parentpath varchar(512) default null, -- 评论的树形 形态.
 
     constraint frk_commentary__blog foreign key(blog) references blog(id) on delete no action on update cascade,
     constraint frk_commentary__user foreign key(user) references user(id) on delete no action on update cascade
