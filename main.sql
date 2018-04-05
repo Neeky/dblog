@@ -37,7 +37,7 @@ create table user(
     signstr varchar(32), -- 个性签名
     authstr varchar(64), -- 验证地址
     gender tinyint, -- 性别标记
-    forbitlogindate datetime default '1900-01-01' -- 禁止用户登录直到当前的时候超过forbitlogindate 时才可能登录
+    forbitlogindate datetime default '1900-01-01', -- 禁止用户登录直到当前的时候超过forbitlogindate 时才可能登录
     registerdate datetime default now(), -- 注册日期/时间
     lastlogindate datetime default now(), -- 最近一次登录的日期/日间
     useragent varchar(32), -- 用户的的客户端类型 ie | chrome | iphone | 安卓 ... 
@@ -92,27 +92,27 @@ create table blog_mark_relaction_ship(
     -- 为了迎合对评论区的高要求、这里用闭包的方式来实现数据库后端的存储
     -- 也就是说commentary 表只存评论数据、
     -- commentary_relation_ship 表用来保存评论的树型关系
-create table commentary(
-    id int not null auto_increment primary key,
-    blog int not null,-- blog id
-    content varchar(256), -- 评论的内容
-    pushdate datetime default now(), -- 评论时间
-    user int not null, -- 发起这条评论的用户
-    praisetimes int default 0, -- 点赞数 
+-- create table commentary(
+--     id int not null auto_increment primary key,
+--     blog int not null,-- blog id
+--     content varchar(256), -- 评论的内容
+--     pushdate datetime default now(), -- 评论时间
+--     user int not null, -- 发起这条评论的用户
+--     praisetimes int default 0, -- 点赞数 
 
-    constraint frk_commentary__blog foreign key(blog) references blog(id) on delete no action on update cascade,
-    constraint frk_commentary__user foreign key(user) references user(id) on delete no action on update cascade
-);
+--     constraint frk_commentary__blog foreign key(blog) references blog(id) on delete no action on update cascade,
+--     constraint frk_commentary__user foreign key(user) references user(id) on delete no action on update cascade
+-- );
 
 -- commentary_relation_ship(评论之间的树形关系)
-create table commentary_relation_ship(
-    ancestor int not null, -- 祖先
-    descendant int not null, -- 自己(后代)
+-- create table commentary_relation_ship(
+--     ancestor int not null, -- 祖先
+--     descendant int not null, -- 自己(后代)
 
-    constraint pmk_commentary_relation_ship__ancestor__descendant primary key(ancestor,descendant),
-    constraint frk_commentary_relation_ship__ancestor foreign key(ancestor) on delete no action on update cascade,
-    constraint frk_commentary_relation_ship__descendant foreign key(descendant) on delete no action on update cascade
-);
+--     constraint pmk_commentary_relation_ship__ancestor__descendant primary key(ancestor,descendant),
+--     constraint frk_commentary_relation_ship__ancestor foreign key(ancestor) on delete no action on update cascade,
+--     constraint frk_commentary_relation_ship__descendant foreign key(descendant) on delete no action on update cascade
+-- );
 
 
 -- 以下是评论区的第二中设计方案 路径枚举
